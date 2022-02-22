@@ -75,7 +75,6 @@ void test_protocol()
     string sigma_transcript_str;
 
 
-
     cout << "Generate the sigma proof >>>" << endl; 
     auto start_time = chrono::steady_clock::now(); // start to count the time
     sigma_transcript_str = ""; 
@@ -91,21 +90,41 @@ void test_protocol()
     cout << "Verify the sigma proof >>>" << endl;
     start_time = chrono::steady_clock::now(); 
     sigma_transcript_str = ""; 
-    Sigma_Verify_Zero(sigma, sigma_instance, sigma_transcript_str, sigma_proof);
+    Sigma_Verify(sigma, sigma_instance, sigma_transcript_str, sigma_proof);
     end_time = chrono::steady_clock::now(); // end to count the time
     running_time = end_time - start_time;
     cout << "Sigma proof verification takes time = "
     << chrono::duration <double, milli> (running_time).count() << " ms" << endl;
-    //SplitLine_print('-');
+    SplitLine_print('-');
 
-    //cout << "Case 1: m = 1 >>>" << endl;
+    cout << "Case 1: m = 1 >>>" << endl;
 
-    //BIGNUM *r = BN_new();
-    //BN_random(r);
+    BN_random(r);
 
-    //Twisted_ElGamal_Enc(pp_tt, keypair.pk, BN_0, r, CT);     
+    Twisted_ElGamal_Enc(pp_tt, keypair.pk, BN_1, r, CT);     
 
-    //generate_sigma_random_instance_witness(pp_tt, sigma, sigma_instance, sigma_witness, r, CT, keypair.pk, true); 
+    generate_sigma_random_instance_witness(pp_tt, sigma, sigma_instance, sigma_witness, r, CT, keypair.pk, true); 
+    cout << "Generate the sigma proof >>>" << endl; 
+    auto start_time = chrono::steady_clock::now(); // start to count the time
+    sigma_transcript_str = ""; 
+    Sigma_Prove_Zero(sigma, sigma_instance, sigma_witness, sigma_transcript_str, sigma_proof);
+    auto end_time = chrono::steady_clock::now(); // end to count the time
+    auto running_time = end_time - start_time;
+    cout << "Sigma proof generation takes time = "
+    << chrono::duration <double, milli> (running_time).count() << " ms" << endl;
+
+
+    SplitLine_print('-');
+
+    cout << "Verify the sigma proof >>>" << endl;
+    start_time = chrono::steady_clock::now(); 
+    sigma_transcript_str = ""; 
+    Sigma_Verify(sigma, sigma_instance, sigma_transcript_str, sigma_proof);
+    end_time = chrono::steady_clock::now(); // end to count the time
+    running_time = end_time - start_time;
+    cout << "Sigma proof verification takes time = "
+    << chrono::duration <double, milli> (running_time).count() << " ms" << endl;
+    SplitLine_print('-');
 
     Sigma_PP_free(sigma); 
     Sigma_Instance_free(sigma_instance);
