@@ -249,7 +249,7 @@ void Sigma_Prove(Sigma_PP &pp,
     BN_sub(proof.beta1, x, proof.beta2);
 
     //BN_mod_mul(proof.omi1, proof.beta1, witness.r, order, bn_ctx); //beta1.r
-    BN_mul(proof.omi1, proof.beta1, witness.r);
+    BN_mul(proof.omi1, proof.beta1, witness.r, bn_ctx);
     //BN_mod_add(proof.omi1, proof.omi1, mui, order, bn_ctx); //omi1 = beta1.r + mui
     BN_add(proof.omi1, proof.omi1, mui);
 
@@ -284,8 +284,8 @@ bool Sigma_Verify(Sigma_PP &pp,
     const EC_POINT *vec_A[2]; 
     const BIGNUM *vec_x[2];
     vec_A[0] = instance.U; 
-    vec_A[1] = BN_1; 
-    vec_x[0] = pp.h; 
+    vec_A[1] = pp.h; 
+    vec_x[0] = BN_1; 
     vec_x[1] = negone;
     EC_POINT_mul(group, c1_h, NULL, pp.h, negone, bn_ctx); //c1_h = c1^1.h^-1
 
