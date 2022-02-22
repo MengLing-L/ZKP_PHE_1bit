@@ -259,6 +259,7 @@ bool Sigma_Verify(Sigma_PP &pp,
     BIGNUM *negone = BN_new();
     BIGNUM *beta1_beta2 = BN_new();
     BN_set_word(negone, -1);
+    BN_print(negone,"negone");
     BN_add(beta1_beta2, proof.beta1, proof.beta2); //beta1 + beta2
 
     BN_print(beta1_beta2, "beta1_beta2");
@@ -289,13 +290,13 @@ bool Sigma_Verify(Sigma_PP &pp,
     
     if (Va1) 
     { 
-        cout<< "a1 unequal Y1 >>>" << endl; 
+        cout<< "a1 == Y1 >>>" << endl; 
         ECP_print(a1, "a1");
         ECP_print(proof.Y1, "Y1");
     }
     else 
     {
-        cout<< "a1 == Y1 >>>" << endl; 
+        cout<< "a1 unequal Y1 >>>" << endl; 
         ECP_print(a1, "a1");
         ECP_print(proof.Y1, "Y1");
     }
@@ -313,13 +314,13 @@ bool Sigma_Verify(Sigma_PP &pp,
     
     if (Va2) 
     { 
-        cout<< "a2 unequal Y2 >>>" << endl; 
+        cout<< "a2 == Y2 >>>" << endl; 
         ECP_print(a2, "a2");
         ECP_print(proof.Y2, "Y2");
     }
     else 
     {
-        cout<< "a2 == Y2 >>>" << endl;
+        cout<< "a2 unequal Y2 >>>" << endl;
         ECP_print(a2, "a2");
         ECP_print(proof.Y2, "Y2"); 
     }
@@ -336,13 +337,13 @@ bool Sigma_Verify(Sigma_PP &pp,
     
     if (Va3) 
     { 
-        cout<< "a3 unequal Y3 >>>" << endl; 
+        cout<< "a3 == Y3 >>>" << endl; 
         ECP_print(a3, "a3");
         ECP_print(proof.Y3, "Y3");
     }
     else 
     {
-        cout<< "a3 == Y3 >>>" << endl; 
+        cout<< "a3 unequal Y3 >>>" << endl; 
         ECP_print(a3, "a3");
         ECP_print(proof.Y3, "Y3");
     }
@@ -359,13 +360,13 @@ bool Sigma_Verify(Sigma_PP &pp,
     
     if (Va4) 
     { 
-        cout<< "a4 unequal Y4 >>>" << endl; 
+        cout<< "a4 == Y4 >>>" << endl; 
         ECP_print(a4, "a4");
         ECP_print(proof.Y4, "Y4");
     }
     else 
     {
-        cout<< "a4 == Y4 >>>" << endl; 
+        cout<< "a4 unequal Y4 >>>" << endl; 
         ECP_print(a4, "a4");
         ECP_print(proof.Y4, "Y4");
     }
