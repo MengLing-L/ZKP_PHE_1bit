@@ -191,8 +191,6 @@ void Sigma_Prove(Sigma_PP &pp,
     Sigma_Instance_print(instance); 
     Sigma_Witness_print(witness);
     #endif
-    transcript_str += ECP_ep2string(instance.twisted_ek)  + 
-                      ECP_ep2string(instance.U)  + ECP_ep2string(instance.V); 
 
     BIGNUM *mui = BN_new(); 
     BIGNUM *negone = BN_new();
@@ -257,13 +255,13 @@ bool Sigma_Verify(Sigma_PP &pp,
                                     Sigma_Proof &proof)
 {
     // initialize the transcript with instance 
-    transcript_str += ECP_ep2string(instance.twisted_ek)  + 
-                      ECP_ep2string(instance.U)  + ECP_ep2string(instance.V); 
 
     BIGNUM *negone = BN_new();
     BIGNUM *beta1_beta2 = BN_new();
     BN_set_word(negone, -1);
     BN_add(beta1_beta2, proof.beta1, proof.beta2); //beta1 + beta2
+
+    BN_print(beta1_beta2, "beta1_beta2");
 
     EC_POINT *c1_h = EC_POINT_new(group); 
     EC_POINT_mul(group, c1_h, NULL, instance.U, negone, bn_ctx); //C1/h
