@@ -41,7 +41,7 @@ struct Twisted_ElGamal_KP
 struct Twisted_ElGamal_CT
 {
     EC_POINT *X; // X = pk^r 
-    EC_POINT *Y; // Y = g^m h^r 
+    EC_POINT *Y; // Y = g^r h^m 
 };
 
 // define the structure of two-recipients one-message ciphertext (MR denotes multiple recipients)
@@ -122,8 +122,8 @@ void Twisted_ElGamal_KP_print(Twisted_ElGamal_KP &keypair)
 
 void Twisted_ElGamal_CT_print(Twisted_ElGamal_CT &CT)
 {
-    ECP_print(CT.X, "CT.X");
-    ECP_print(CT.Y, "CT.Y");
+    ECP_print(CT.Y, "CT.C1");
+    ECP_print(CT.X, "CT.C2");
 } 
 
 void MR_Twisted_ElGamal_CT_print(MR_Twisted_ElGamal_CT &CT)

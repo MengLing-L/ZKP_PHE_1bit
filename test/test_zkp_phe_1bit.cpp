@@ -30,6 +30,7 @@ void generate_sigma_random_instance_witness(
 void test_protocol()
 {
     SplitLine_print('-'); 
+    cout << "Initialization >>>" << endl;
 
     Twisted_ElGamal_PP pp_tt; 
     Twisted_ElGamal_PP_new(pp_tt);
@@ -57,7 +58,13 @@ void test_protocol()
     Sigma_Proof sigma_proof; 
     Sigma_Proof_new(sigma_proof); 
 
+    SplitLine_print('-');
+
    
+    cout << "Case 1: m = 0 >>>" << endl;
+
+
+    cout << "Encrypt m >>>" << endl;
     BIGNUM *r = BN_new();
     BN_random(r);
 
@@ -67,11 +74,12 @@ void test_protocol()
 
     string sigma_transcript_str;
 
-    cout << "generate the sigma proof >>>" << endl; 
-    cout << "begin count sigma proof generation time >>>" << endl;
+
+
+    cout << "Generate the sigma proof >>>" << endl; 
     auto start_time = chrono::steady_clock::now(); // start to count the time
     sigma_transcript_str = ""; 
-    Sigma_Prove(sigma, sigma_instance, sigma_witness, sigma_transcript_str, sigma_proof);
+    Sigma_Prove_Zero(sigma, sigma_instance, sigma_witness, sigma_transcript_str, sigma_proof);
     auto end_time = chrono::steady_clock::now(); // end to count the time
     auto running_time = end_time - start_time;
     cout << "Sigma proof generation takes time = "
@@ -80,16 +88,24 @@ void test_protocol()
 
     SplitLine_print('-');
 
-    cout << "verify the sigma proof >>>" << endl;
-    cout << "begin count Sigma proof verification time >>>" << endl;
+    cout << "Verify the sigma proof >>>" << endl;
     start_time = chrono::steady_clock::now(); 
     sigma_transcript_str = ""; 
-    Sigma_Verify(sigma, sigma_instance, sigma_transcript_str, sigma_proof);
+    Sigma_Verify_Zero(sigma, sigma_instance, sigma_transcript_str, sigma_proof);
     end_time = chrono::steady_clock::now(); // end to count the time
     running_time = end_time - start_time;
     cout << "Sigma proof verification takes time = "
     << chrono::duration <double, milli> (running_time).count() << " ms" << endl;
-    SplitLine_print('-');
+    //SplitLine_print('-');
+
+    //cout << "Case 1: m = 1 >>>" << endl;
+
+    //BIGNUM *r = BN_new();
+    //BN_random(r);
+
+    //Twisted_ElGamal_Enc(pp_tt, keypair.pk, BN_0, r, CT);     
+
+    //generate_sigma_random_instance_witness(pp_tt, sigma, sigma_instance, sigma_witness, r, CT, keypair.pk, true); 
 
     Sigma_PP_free(sigma); 
     Sigma_Instance_free(sigma_instance);

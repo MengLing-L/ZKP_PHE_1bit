@@ -40,7 +40,7 @@ struct Sigma_Witness
 struct Sigma_Proof
 {
     EC_POINT *Y1, *Y2, *Y3, *Y4; // P's first round message
-    BIGNUM *beta1, *beta2, *omi1, *omi2;    // P's response in Zq
+    BIGNUM *beta1, *beta2, *omega1, *omega2;    // P's response in Zq
 };
 
 void Sigma_Instance_new(Sigma_Instance &instance)
@@ -79,8 +79,8 @@ void Sigma_Proof_new(Sigma_Proof &proof)
     proof.Y4  = EC_POINT_new(group);
     proof.beta1 = BN_new(); 
     proof.beta2 = BN_new();
-    proof.omi1 = BN_new();
-    proof.omi2 = BN_new();
+    proof.omega1 = BN_new();
+    proof.omega2 = BN_new();
 }
 
 void Sigma_Proof_free(Sigma_Proof &proof)
@@ -91,8 +91,8 @@ void Sigma_Proof_free(Sigma_Proof &proof)
     EC_POINT_free(proof.Y4);
     BN_free(proof.beta1);
     BN_free(proof.beta2);
-    BN_free(proof.omi1);
-    BN_free(proof.omi2);
+    BN_free(proof.omega1);
+    BN_free(proof.omega2);
 }
 
 
@@ -111,18 +111,18 @@ void Sigma_Witness_print(Sigma_Witness &witness)
     BN_print(witness.r, "witness.r"); 
 } 
 
-void Sigma_Proof_print(Sigma_Proof &proof)
+void Sigma_Proof_print_Zero(Sigma_Proof &proof)
 {
     SplitLine_print('-'); 
-    cout << "Sigma proof for Plaintext Equality >>> " << endl; 
-    ECP_print(proof.Y2, "proof.Y2"); 
-    ECP_print(proof.Y3, "proof.Y3"); 
-    ECP_print(proof.Y1, "proof.Y1"); 
-    ECP_print(proof.Y4, "proof.Y4"); 
+    cout << "Sigma proof for Plaintext Equality >>> " << endl;
+    ECP_print(proof.Y1, "proof.Y1 = g^mu"); 
+    ECP_print(proof.Y2, "proof.Y2 = PK^mu"); 
+    ECP_print(proof.Y3, "proof.Y3 = g^omega2.((C1/h)^beta2)^-1"); 
+    ECP_print(proof.Y4, "proof.Y4 = pk^omega2.(C2^beta2)^-1"); 
     BN_print(proof.beta1, "proof.beta1"); 
     BN_print(proof.beta2, "proof.beta2"); 
-    BN_print(proof.omi1, "proof.omi1"); 
-    BN_print(proof.omi2, "proof.omi2");
+    BN_print(proof.omega1, "proof.omega1"); 
+    BN_print(proof.omega2, "proof.omega2");
 } 
 
 void Sigma_Proof_serialize(Sigma_Proof &proof, ofstream &fout)
@@ -132,8 +132,8 @@ void Sigma_Proof_serialize(Sigma_Proof &proof, ofstream &fout)
     ECP_serialize(proof.Y1,  fout);
     BN_serialize(proof.beta1, fout); 
     BN_serialize(proof.beta2, fout); 
-    BN_serialize(proof.omi1, fout); 
-    BN_serialize(proof.omi2, fout); 
+    BN_serialize(proof.omega1, fout); 
+    BN_serialize(proof.omega2, fout); 
 } 
 
 void Sigma_Proof_deserialize(Sigma_Proof &proof, ifstream &fin)
@@ -143,8 +143,8 @@ void Sigma_Proof_deserialize(Sigma_Proof &proof, ifstream &fin)
     ECP_deserialize(proof.Y1,  fin);
     BN_deserialize(proof.beta1, fin); 
     BN_deserialize(proof.beta2, fin); 
-    BN_deserialize(proof.omi1, fin); 
-    BN_deserialize(proof.omi2, fin);
+    BN_deserialize(proof.omega1, fin); 
+    BN_deserialize(proof.omega2, fin);
 } 
 
 void Sigma_PP_print(Sigma_PP &pp)
@@ -179,7 +179,7 @@ void Sigma_PP_free(Sigma_PP &pp)
     EC_POINT_free(pp.h); 
 }
 
-void Sigma_Prove(Sigma_PP &pp, 
+void Sigma_Prove_Zero(Sigma_PP &pp, 
                                    Sigma_Instance &instance, 
                                    Sigma_Witness &witness, 
                                    string &transcript_str, 
@@ -192,7 +192,7 @@ void Sigma_Prove(Sigma_PP &pp,
     Sigma_Witness_print(witness);
     #endif
 
-    BIGNUM *mui = BN_new(); 
+    BIGNUM *mu = BN_new(); 
     BIGNUM *negone = BN_new();
     const EC_POINT *vec_A[2]; 
     const BIGNUM *vec_x[2];
@@ -200,7 +200,7 @@ void Sigma_Prove(Sigma_PP &pp,
 
     BN_copy(negone, BN_1);
     BN_set_negative(negone, 1);
-    BN_print(negone,"negone");
+    
 
 
     EC_POINT *c1_h = EC_POINT_new(group); 
@@ -212,27 +212,27 @@ void Sigma_Prove(Sigma_PP &pp,
 
 
 
-    BN_random(mui);
+    BN_random(mu);
     BN_random(proof.beta2);
-    BN_random(proof.omi2);
+    BN_random(proof.omega2);
 
-    EC_POINT_mul(group, proof.Y1, NULL, pp.g, mui, bn_ctx); // Y1 = g^mui
-    EC_POINT_mul(group, proof.Y2, NULL, instance.twisted_ek, mui, bn_ctx); // Y2 =  PK^mui
+    EC_POINT_mul(group, proof.Y1, NULL, pp.g, mu, bn_ctx); // Y1 = g^mu
+    EC_POINT_mul(group, proof.Y2, NULL, instance.twisted_ek, mu, bn_ctx); // Y2 =  PK^mu
     
 
     EC_POINT_mul(group, proof.Y3, NULL, c1_h, proof.beta2, bn_ctx); //   (c1/h)^beta2
     vec_A[0] = pp.g; 
     vec_A[1] = proof.Y3; 
-    vec_x[0] = proof.omi2; 
+    vec_x[0] = proof.omega2; 
     vec_x[1] = negone; 
-    EC_POINTs_mul(group, proof.Y3, NULL, 2, vec_A, vec_x, bn_ctx); //g^omi2.((c1/h)^beta2)^-1
+    EC_POINTs_mul(group, proof.Y3, NULL, 2, vec_A, vec_x, bn_ctx); //g^omega2.((c1/h)^beta2)^-1
 
     EC_POINT_mul(group, proof.Y4, NULL, instance.V, proof.beta2, bn_ctx); //C2^beta2
     vec_A[0] = instance.twisted_ek; 
     vec_A[1] = proof.Y4; 
-    vec_x[0] = proof.omi2; 
+    vec_x[0] = proof.omega2; 
     vec_x[1] = negone; 
-    EC_POINTs_mul(group, proof.Y4, NULL, 2, vec_A, vec_x, bn_ctx); // Y4 = pk^omi2.(C2^beta2)^-1
+    EC_POINTs_mul(group, proof.Y4, NULL, 2, vec_A, vec_x, bn_ctx); // Y4 = pk^omega2.(C2^beta2)^-1
 
     // update the transcript with the first round message
     transcript_str += ECP_ep2string(proof.Y1) + ECP_ep2string(proof.Y2) 
@@ -247,23 +247,23 @@ void Sigma_Prove(Sigma_PP &pp,
     //BN_mod_sub(proof.beta1, x, proof.beta2,order, bn_ctx); // beta1 = x - beta2
     BN_sub(proof.beta1, x, proof.beta2);
 
-    //BN_mod_mul(proof.omi1, proof.beta1, witness.r, order, bn_ctx); //beta1.r
-    BN_mul(proof.omi1, proof.beta1, witness.r, bn_ctx);
-    //BN_mod_add(proof.omi1, proof.omi1, mui, order, bn_ctx); //omi1 = beta1.r + mui
-    BN_add(proof.omi1, proof.omi1, mui);
+    //BN_mod_mul(proof.omega1, proof.beta1, witness.r, order, bn_ctx); //beta1.r
+    BN_mul(proof.omega1, proof.beta1, witness.r, bn_ctx);
+    //BN_mod_add(proof.omega1, proof.omega1, mu, order, bn_ctx); //omega1 = beta1.r + mu
+    BN_add(proof.omega1, proof.omega1, mu);
 
-    BN_free(mui); 
+    BN_free(mu); 
     BN_free(negone);
     BN_free(x); 
 
     #ifdef DEBUG
-    Sigma_Proof_print(proof); 
+    Sigma_Proof_print_Zero(proof); 
     #endif
 }
 
 
 // check Sigma  proof PI for C1 = Enc(twisted_ek, m; r1) and C2 = Enc(R, m; r2) the witness is (r1, r2, m)
-bool Sigma_Verify(Sigma_PP &pp, 
+bool Sigma_Verify_Zero(Sigma_PP &pp, 
                                     Sigma_Instance &instance, 
                                     string &transcript_str,
                                     Sigma_Proof &proof)
@@ -299,15 +299,15 @@ bool Sigma_Verify(Sigma_PP &pp,
     EC_POINT_mul(group, a1, NULL, instance.U, proof.beta1, bn_ctx);
     vec_A[0] = pp.g; 
     vec_A[1] = a1;
-    vec_x[0] = proof.omi1; 
+    vec_x[0] = proof.omega1; 
     vec_x[1] = negone;
-    EC_POINTs_mul(group, a1, NULL, 2, vec_A, vec_x, bn_ctx); // a1= g^omi1.(C1^beta1)^-1
+    EC_POINTs_mul(group, a1, NULL, 2, vec_A, vec_x, bn_ctx); // a1= g^omega1.(C1^beta1)^-1
     Va1 = (EC_POINT_cmp(group, a1, proof.Y1, bn_ctx) == 0);
     #ifdef DEBUG
     
     if (Va1) 
     { 
-        cout<< "a1 == Y1 >>>" << endl; 
+        cout<< "(a1 = g^omega1.(C1^beta1)^-1) == Y1 >>>" << endl; 
         ECP_print(a1, "a1");
         ECP_print(proof.Y1, "Y1");
     }
@@ -323,15 +323,15 @@ bool Sigma_Verify(Sigma_PP &pp,
     EC_POINT_mul(group, a2, NULL, instance.V, proof.beta1, bn_ctx); // C2^beta2
     vec_A[0] = instance.twisted_ek; 
     vec_A[1] = a2;
-    vec_x[0] = proof.omi1; 
+    vec_x[0] = proof.omega1; 
     vec_x[1] = negone;
-    EC_POINTs_mul(group, a2, NULL, 2, vec_A, vec_x, bn_ctx); // a2= pk^omi1.(C2^beta1)^-1
+    EC_POINTs_mul(group, a2, NULL, 2, vec_A, vec_x, bn_ctx); // a2= pk^omega1.(C2^beta1)^-1
     Va2 = (EC_POINT_cmp(group, a2, proof.Y2, bn_ctx) == 0);
     #ifdef DEBUG
     
     if (Va2) 
     { 
-        cout<< "a2 == Y2 >>>" << endl; 
+        cout<< "(a2= pk^omega1.(C2^beta1)^-1) == Y2 >>>" << endl; 
         ECP_print(a2, "a2");
         ECP_print(proof.Y2, "Y2");
     }
@@ -346,15 +346,15 @@ bool Sigma_Verify(Sigma_PP &pp,
     EC_POINT_mul(group, a3, NULL, c1_h, proof.beta2, bn_ctx);
     vec_A[0] = pp.g; 
     vec_A[1] = a3;
-    vec_x[0] = proof.omi2; 
+    vec_x[0] = proof.omega2; 
     vec_x[1] = negone;
-    EC_POINTs_mul(group, a3, NULL, 2, vec_A, vec_x, bn_ctx); // a3= g^omi2.(C1_h^beta2)^-1
+    EC_POINTs_mul(group, a3, NULL, 2, vec_A, vec_x, bn_ctx); // a3= g^omega2.(C1_h^beta2)^-1
     Va3 = (EC_POINT_cmp(group, a3, proof.Y3, bn_ctx) == 0);
     #ifdef DEBUG
     
     if (Va3) 
     { 
-        cout<< "a3 == Y3 >>>" << endl; 
+        cout<< "(a3= g^omega2.(C1_h^beta2)^-1) == Y3 >>>" << endl; 
         ECP_print(a3, "a3");
         ECP_print(proof.Y3, "Y3");
     }
@@ -369,15 +369,15 @@ bool Sigma_Verify(Sigma_PP &pp,
     EC_POINT_mul(group, a4, NULL, instance.V, proof.beta2, bn_ctx);
     vec_A[0] = instance.twisted_ek; 
     vec_A[1] = a4;
-    vec_x[0] = proof.omi2; 
+    vec_x[0] = proof.omega2; 
     vec_x[1] = negone;
-    EC_POINTs_mul(group, a4, NULL, 2, vec_A, vec_x, bn_ctx); // a4= pk^omi2.(C2^beta2)^-1
+    EC_POINTs_mul(group, a4, NULL, 2, vec_A, vec_x, bn_ctx); // a4= pk^omega2.(C2^beta2)^-1
     Va4 = (EC_POINT_cmp(group, a4, proof.Y4, bn_ctx) == 0);
     #ifdef DEBUG
     
     if (Va4) 
     { 
-        cout<< "a4 == Y4 >>>" << endl; 
+        cout<< "(a4= pk^omega2.(C2^beta2)^-1) == Y4 >>>" << endl; 
         ECP_print(a4, "a4");
         ECP_print(proof.Y4, "Y4");
     }
@@ -397,8 +397,8 @@ bool Sigma_Verify(Sigma_PP &pp,
     // compute the challenge
     BIGNUM *x = BN_new(); 
     Hash_String_to_BN(transcript_str, x); 
-    BN_mod(x, x, order, bn_ctx);
-    BN_print(x, "x");
+    //BN_mod(x, x, order, bn_ctx);
+    //BN_print(x, "x");
 
 
     bool V;
