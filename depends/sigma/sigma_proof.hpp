@@ -375,6 +375,7 @@ bool Sigma_Verify(Sigma_PP &pp,
     // compute the challenge
     BIGNUM *x = BN_new(); 
     Hash_String_to_BN(transcript_str, x); 
+    BN_mod(x, x, order, bn_ctx);
     BN_print(x, "x");
 
 
