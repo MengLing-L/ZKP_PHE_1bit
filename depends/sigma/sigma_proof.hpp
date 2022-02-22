@@ -231,14 +231,14 @@ void Sigma_Prove(Sigma_PP &pp,
     // compute the challenge
     BIGNUM *x = BN_new(); 
     Hash_String_to_BN(transcript_str, x); // challenge x
-
+    BN_mod(x, x, order, bn_ctx);
     BN_print(x, "x");
 
     // compute the response
-    BN_sub(proof.beta1, x, proof.beta2); // beta1 = x - beta2
+    BN_mod_sub(proof.beta1, x, proof.beta2,order, bn_ctx); // beta1 = x - beta2
 
-    BN_mul(proof.omi1, proof.beta1, witness.r, bn_ctx); //beta1.r
-    BN_add(proof.omi1, proof.omi1, mui); //omi1 = beta1.r + mui
+    BN_mod_mul(proof.omi1, proof.beta1, witness.r, order, bn_ctx); //beta1.r
+    BN_mod_add(proof.omi1, proof.omi1, mui, order, bn_ctx); //omi1 = beta1.r + mui
 
     BN_free(mui); 
     BN_free(negone);
