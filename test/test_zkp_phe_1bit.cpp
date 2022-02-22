@@ -105,11 +105,11 @@ void test_protocol()
 
     generate_sigma_random_instance_witness(pp_tt, sigma, sigma_instance, sigma_witness, r, CT, keypair.pk, true); 
     cout << "Generate the sigma proof >>>" << endl; 
-    auto start_time = chrono::steady_clock::now(); // start to count the time
+    start_time = chrono::steady_clock::now(); // start to count the time
     sigma_transcript_str = ""; 
     Sigma_Prove_One(sigma, sigma_instance, sigma_witness, sigma_transcript_str, sigma_proof);
-    auto end_time = chrono::steady_clock::now(); // end to count the time
-    auto running_time = end_time - start_time;
+    end_time = chrono::steady_clock::now(); // end to count the time
+    running_time = end_time - start_time;
     cout << "Sigma proof generation takes time = "
     << chrono::duration <double, milli> (running_time).count() << " ms" << endl;
 
