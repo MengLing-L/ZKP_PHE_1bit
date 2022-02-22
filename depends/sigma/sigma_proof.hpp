@@ -244,13 +244,13 @@ void Sigma_Prove(Sigma_PP &pp,
     BN_print(x, "x");
 
     // compute the response
-    BN_mod_sub(proof.beta1, x, proof.beta2,order, bn_ctx); // beta1 = x - beta2
-    //BN_sub(proof.beta1, x, proof.beta2);
+    //BN_mod_sub(proof.beta1, x, proof.beta2,order, bn_ctx); // beta1 = x - beta2
+    BN_sub(proof.beta1, x, proof.beta2);
 
-    BN_mod_mul(proof.omi1, proof.beta1, witness.r, order, bn_ctx); //beta1.r
-    //BN_mul(proof.omi1, proof.beta1, witness.r, bn_ctx);
-    BN_mod_add(proof.omi1, proof.omi1, mui, order, bn_ctx); //omi1 = beta1.r + mui
-    //BN_add(proof.omi1, proof.omi1, mui);
+    //BN_mod_mul(proof.omi1, proof.beta1, witness.r, order, bn_ctx); //beta1.r
+    BN_mul(proof.omi1, proof.beta1, witness.r, bn_ctx);
+    //BN_mod_add(proof.omi1, proof.omi1, mui, order, bn_ctx); //omi1 = beta1.r + mui
+    BN_add(proof.omi1, proof.omi1, mui);
 
     BN_free(mui); 
     BN_free(negone);
