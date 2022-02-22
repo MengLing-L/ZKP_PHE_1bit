@@ -156,8 +156,8 @@ void Sigma_PP_print(Sigma_PP &pp)
 void Sigma_Setup(Sigma_PP &pp, EC_POINT* &h)
 { 
     
-    EC_POINT_copy(pp.g, h); 
-    EC_POINT_copy(pp.h, generator);  
+    EC_POINT_copy(pp.g, generator); 
+    EC_POINT_copy(pp.h, h);  
     #ifdef DEBUG
     cout << "generate the public parameters for sigmaproof >>>" << endl; 
     Sigma_PP_print(pp); 
@@ -209,6 +209,7 @@ void Sigma_Prove(Sigma_PP &pp,
     vec_x[0] = BN_1; 
     vec_x[1] = negone;
     EC_POINTs_mul(group, c1_h, NULL, 2, vec_A, vec_x, bn_ctx); //c1_h = c1^1.h^-1
+
 
 
     BN_random(mui);
