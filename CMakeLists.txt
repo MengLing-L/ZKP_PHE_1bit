@@ -10,6 +10,6 @@ find_package(OpenSSL REQUIRED)
 
 include_directories(${OPENSSL_INCLUDE_DIR})
   
-add_executable(test_escrow_protocol test/test_escrow_protocol.cpp)
+add_executable(test_zkp_phe_1bit test/test_zkp_phe_1bit.cpp)
 
-target_link_libraries(test_escrow_protocol ${OPENSSL_LIBRARIES})
+target_link_libraries(test_zkp_phe_1bit ${OPENSSL_LIBRARIES})
