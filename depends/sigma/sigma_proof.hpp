@@ -296,6 +296,8 @@ bool Sigma_Verify(Sigma_PP &pp,
     else 
     {
         cout<< "a1 == Y1 >>>" << endl; 
+        ECP_print(a1, "a1");
+        ECP_print(proof.Y1, "Y1");
     }
     #endif
 
@@ -317,7 +319,9 @@ bool Sigma_Verify(Sigma_PP &pp,
     }
     else 
     {
-        cout<< "a2 == Y2 >>>" << endl; 
+        cout<< "a2 == Y2 >>>" << endl;
+        ECP_print(a2, "a2");
+        ECP_print(proof.Y2, "Y2"); 
     }
     #endif
 
@@ -339,6 +343,8 @@ bool Sigma_Verify(Sigma_PP &pp,
     else 
     {
         cout<< "a3 == Y3 >>>" << endl; 
+        ECP_print(a3, "a3");
+        ECP_print(proof.Y3, "Y3");
     }
     #endif
 
@@ -360,6 +366,8 @@ bool Sigma_Verify(Sigma_PP &pp,
     else 
     {
         cout<< "a4 == Y4 >>>" << endl; 
+        ECP_print(a4, "a4");
+        ECP_print(proof.Y4, "Y4");
     }
     #endif
 
