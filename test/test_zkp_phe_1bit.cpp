@@ -107,7 +107,7 @@ void test_protocol()
     cout << "Generate the sigma proof >>>" << endl; 
     auto start_time = chrono::steady_clock::now(); // start to count the time
     sigma_transcript_str = ""; 
-    Sigma_Prove_Zero(sigma, sigma_instance, sigma_witness, sigma_transcript_str, sigma_proof);
+    Sigma_Prove_One(sigma, sigma_instance, sigma_witness, sigma_transcript_str, sigma_proof);
     auto end_time = chrono::steady_clock::now(); // end to count the time
     auto running_time = end_time - start_time;
     cout << "Sigma proof generation takes time = "
