@@ -101,8 +101,8 @@ void Sigma_Instance_print(Sigma_Instance &instance)
     cout << "Sigma Instance >>> " << endl; 
     ECP_print(instance.twisted_ek, "instance.twisted_ek"); 
     
-    ECP_print(instance.U, "instance.U"); 
-    ECP_print(instance.V, "instance.V");     
+    ECP_print(instance.U, "instance.C1"); 
+    ECP_print(instance.V, "instance.C2");     
 } 
 
 void Sigma_Witness_print(Sigma_Witness &witness)
