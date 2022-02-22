@@ -344,7 +344,7 @@ void Sigma_Prove_One(Sigma_PP &pp,
     BN_free(x); 
 
     #ifdef DEBUG
-    Sigma_Proof_print_Zero(proof); 
+    Sigma_Proof_print_One(proof); 
     #endif
 }
 
