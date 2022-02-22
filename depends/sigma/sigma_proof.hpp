@@ -232,7 +232,7 @@ void Sigma_Prove(Sigma_PP &pp,
     vec_A[1] = proof.Y4; 
     vec_x[0] = proof.omi2; 
     vec_x[1] = negone; 
-    EC_POINTs_mul(group, proof.Y3, NULL, 2, vec_A, vec_x, bn_ctx); // Y4 = pk^omi2.(C2^beta2)^-1
+    EC_POINTs_mul(group, proof.Y4, NULL, 2, vec_A, vec_x, bn_ctx); // Y4 = pk^omi2.(C2^beta2)^-1
 
     // update the transcript with the first round message
     transcript_str += ECP_ep2string(proof.Y1) + ECP_ep2string(proof.Y2) 
