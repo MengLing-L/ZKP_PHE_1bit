@@ -194,7 +194,9 @@ void Sigma_Prove(Sigma_PP &pp,
 
     BIGNUM *mui = BN_new(); 
     BIGNUM *negone = BN_new();
-    BN_set_word(negone, -1);
+    BN_copy(negone, BN_1);
+    BN_set_negative(negone, 1);
+    BN_print(negone,"negone");
     EC_POINT *c1_h = EC_POINT_new(group); 
     EC_POINT_mul(group, c1_h, NULL, instance.U, negone, bn_ctx); //C1/h
 
@@ -257,9 +259,10 @@ bool Sigma_Verify(Sigma_PP &pp,
     // initialize the transcript with instance 
 
     BIGNUM *negone = BN_new();
-    BIGNUM *beta1_beta2 = BN_new();
-    BN_set_word(negone, -1);
+    BN_copy(negone, BN_1);
+    BN_set_negative(negone, 1);
     BN_print(negone,"negone");
+    BIGNUM *beta1_beta2 = BN_new();
     BN_add(beta1_beta2, proof.beta1, proof.beta2); //beta1 + beta2
 
     BN_print(beta1_beta2, "beta1_beta2");
