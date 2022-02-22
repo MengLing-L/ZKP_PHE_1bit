@@ -204,13 +204,11 @@ void Sigma_Prove(Sigma_PP &pp,
 
 
     EC_POINT *c1_h = EC_POINT_new(group); 
-    const EC_POINT *vec_A[2]; 
-    const BIGNUM *vec_x[2];
     vec_A[0] = instance.U; 
-    vec_A[1] = BN_1; 
-    vec_x[0] = pp.h; 
+    vec_A[1] = pp.h; 
+    vec_x[0] = BN_1; 
     vec_x[1] = negone;
-    EC_POINT_mul(group, c1_h, NULL, pp.h, negone, bn_ctx); //c1_h = c1^1.h^-1
+    EC_POINT_mul(group, c1_h, NULL, 2, vec_A, vec_x, bn_ctx); //c1_h = c1^1.h^-1
 
 
     BN_random(mui);
@@ -287,7 +285,7 @@ bool Sigma_Verify(Sigma_PP &pp,
     vec_A[1] = pp.h; 
     vec_x[0] = BN_1; 
     vec_x[1] = negone;
-    EC_POINT_mul(group, c1_h, NULL, pp.h, negone, bn_ctx); //c1_h = c1^1.h^-1
+    EC_POINT_mul(group, c1_h, NULL, 2, vec_A, vec_x, bn_ctx); //c1_h = c1^1.h^-1
 
     EC_POINT *a1 = EC_POINT_new(group);
     EC_POINT *a2 = EC_POINT_new(group);
