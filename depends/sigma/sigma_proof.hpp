@@ -278,12 +278,29 @@ bool Sigma_Verify(Sigma_PP &pp,
     const EC_POINT *vec_A[2]; 
     const BIGNUM *vec_x[2];
 
+    bool Va1,Va2,Va3,Va4;
+
     EC_POINT_mul(group, a1, NULL, instance.U, proof.beta1, bn_ctx);
     vec_A[0] = pp.g; 
     vec_A[1] = a1;
     vec_x[0] = proof.omi1; 
     vec_x[1] = negone;
     EC_POINTs_mul(group, a1, NULL, 2, vec_A, vec_x, bn_ctx); // a1= g^omi1.(C1^beta1)^-1
+    Va1 = (EC_POINT_cmp(group, a1, proof.Y1, bn_ctx) == 0);
+    #ifdef DEBUG
+    
+    if (Va1) 
+    { 
+        cout<< "a1 unequal Y1 >>>" << endl; 
+        ECP_print(a1, "a1");
+        ECP_print(proof.Y1, "Y1");
+    }
+    else 
+    {
+        cout<< "a1 == Y1 >>>" << endl; 
+    }
+    #endif
+
 
     EC_POINT_mul(group, a2, NULL, instance.V, proof.beta1, bn_ctx); // C2^beta2
     vec_A[0] = instance.twisted_ek; 
@@ -291,6 +308,20 @@ bool Sigma_Verify(Sigma_PP &pp,
     vec_x[0] = proof.omi1; 
     vec_x[1] = negone;
     EC_POINTs_mul(group, a2, NULL, 2, vec_A, vec_x, bn_ctx); // a2= pk^omi1.(C2^beta1)^-1
+    Va2 = (EC_POINT_cmp(group, a2, proof.Y2, bn_ctx) == 0);
+    #ifdef DEBUG
+    
+    if (Va2) 
+    { 
+        cout<< "a2 unequal Y2 >>>" << endl; 
+        ECP_print(a2, "a2");
+        ECP_print(proof.Y2, "Y2");
+    }
+    else 
+    {
+        cout<< "a2 == Y2 >>>" << endl; 
+    }
+    #endif
 
     EC_POINT_mul(group, a3, NULL, c1_h, proof.beta2, bn_ctx);
     vec_A[0] = pp.g; 
@@ -298,6 +329,20 @@ bool Sigma_Verify(Sigma_PP &pp,
     vec_x[0] = proof.omi2; 
     vec_x[1] = negone;
     EC_POINTs_mul(group, a3, NULL, 2, vec_A, vec_x, bn_ctx); // a3= g^omi2.(C1_h^beta2)^-1
+    Va3 = (EC_POINT_cmp(group, a3, proof.Y3, bn_ctx) == 0);
+    #ifdef DEBUG
+    
+    if (Va3) 
+    { 
+        cout<< "a3 unequal Y3 >>>" << endl; 
+        ECP_print(a3, "a3");
+        ECP_print(proof.Y3, "Y3");
+    }
+    else 
+    {
+        cout<< "a3 == Y3 >>>" << endl; 
+    }
+    #endif
 
     EC_POINT_mul(group, a4, NULL, instance.V, proof.beta2, bn_ctx);
     vec_A[0] = instance.twisted_ek; 
@@ -305,6 +350,20 @@ bool Sigma_Verify(Sigma_PP &pp,
     vec_x[0] = proof.omi2; 
     vec_x[1] = negone;
     EC_POINTs_mul(group, a4, NULL, 2, vec_A, vec_x, bn_ctx); // a4= pk^omi2.(C2^beta2)^-1
+    Va4 = (EC_POINT_cmp(group, a4, proof.Y4, bn_ctx) == 0);
+    #ifdef DEBUG
+    
+    if (Va4) 
+    { 
+        cout<< "a4 unequal Y4 >>>" << endl; 
+        ECP_print(a4, "a4");
+        ECP_print(proof.Y4, "Y4");
+    }
+    else 
+    {
+        cout<< "a4 == Y4 >>>" << endl; 
+    }
+    #endif
 
 
     // update the transcript with the first round message
