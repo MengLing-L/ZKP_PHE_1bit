@@ -339,7 +339,7 @@ void Sigma_Prove_One(Sigma_PP &pp,
     //BN_mod_add(proof.omega1, proof.omega1, mu, order, bn_ctx); //omega1 = beta1.r + mu
     BN_add(proof.omega2, proof.omega2, mu2);
 
-    BN_free(mu); 
+    BN_free(mu2); 
     BN_free(negone);
     BN_free(x); 
 
