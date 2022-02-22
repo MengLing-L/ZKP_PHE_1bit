@@ -191,7 +191,7 @@ void Sigma_Prove(Sigma_PP &pp,
     Sigma_Instance_print(instance); 
     Sigma_Witness_print(witness);
     #endif
-    transcript_str += ECP_ep2string(instance.twisted_ek) + ECP_ep2string(instance.R) + 
+    transcript_str += ECP_ep2string(instance.twisted_ek)  + 
                       ECP_ep2string(instance.U)  + ECP_ep2string(instance.V); 
 
     BIGNUM *mui = BN_new(); 
@@ -238,7 +238,7 @@ void Sigma_Prove(Sigma_PP &pp,
     BN_sub(proof.beta1, x, proof.beta2); // beta1 = x - beta2
 
     BN_mul(proof.omi1, proof.beta1, witness.r, bn_ctx); //beta1.r
-    BN_add(proof.omi1, proof.omi1, proof.mui); //omi1 = beta1.r + mui
+    BN_add(proof.omi1, proof.omi1, mui); //omi1 = beta1.r + mui
 
     BN_free(mui); 
     BN_free(negone);
@@ -257,7 +257,7 @@ bool Sigma_Verify(Sigma_PP &pp,
                                     Sigma_Proof &proof)
 {
     // initialize the transcript with instance 
-    transcript_str += ECP_ep2string(instance.twisted_ek) + ECP_ep2string(instance.R) + 
+    transcript_str += ECP_ep2string(instance.twisted_ek)  + 
                       ECP_ep2string(instance.U)  + ECP_ep2string(instance.V); 
 
     BIGNUM *negone = BN_new();
@@ -308,8 +308,8 @@ bool Sigma_Verify(Sigma_PP &pp,
 
 
     // update the transcript with the first round message
-    transcript_str += ECP_ep2string(proof.a1) + ECP_ep2string(proof.a2) 
-                    + ECP_ep2string(proof.a3) + ECP_ep2string(proof.a4);
+    transcript_str += ECP_ep2string(a1) + ECP_ep2string(a2) 
+                    + ECP_ep2string(a3) + ECP_ep2string(a4);
     
     // compute the challenge
     BIGNUM *x = BN_new(); 
@@ -333,7 +333,7 @@ bool Sigma_Verify(Sigma_PP &pp,
     }
     #endif
 
-    BN_free(e); 
+    BN_free(x); 
 
     return Validity;
 }

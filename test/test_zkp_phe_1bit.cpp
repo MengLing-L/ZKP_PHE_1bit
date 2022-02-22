@@ -69,11 +69,11 @@ void test_protocol()
 
     cout << "generate the sigma proof >>>" << endl; 
     cout << "begin count sigma proof generation time >>>" << endl;
-    start_time = chrono::steady_clock::now(); // start to count the time
+    auto start_time = chrono::steady_clock::now(); // start to count the time
     sigma_transcript_str = ""; 
     Sigma_Prove(sigma, sigma_instance, sigma_witness, sigma_transcript_str, sigma_proof);
-    end_time = chrono::steady_clock::now(); // end to count the time
-    running_time = end_time - start_time;
+    auto end_time = chrono::steady_clock::now(); // end to count the time
+    auto running_time = end_time - start_time;
     cout << "Sigma proof generation takes time = "
     << chrono::duration <double, milli> (running_time).count() << " ms" << endl;
 
