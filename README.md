@@ -1,20 +1,4 @@
-We provide two ways to deploy and run our system. The first one uses Docker to run our system where you can pull our image mengling333666/meng:escrow, and then you can directly run our system without installing OpenSSL and compiling our code. The second one provides the detailed steps for you to directly deploy our system to your OS.
 
-## Docker
-1. Install Docker. Official guideline (https://docs.docker.com/get-docker/)
-2. Pull our image.
-```
-    docker pull mengling333666/meng:escrow
-```
-4. Run the container.
-```
-    docker run -it mengling333666/meng:escrow /bin/bash
-```
-6. Run our protocol.
-```
-    cd /home/Escrow-protocol/PGC_openssl/build
-    ./test_escrow_protocol
-```
 ## Direct Deployent 
 
 ### Specifications
@@ -54,11 +38,11 @@ The current implementation is based on OpenSSL library. See the installment inst
 To compile and test the system, do the following: 
 
 ```
-  $ cd {PATH}/Escrow-protocol/PGC_openssl/
+  $ cd {PATH}/ZKP_PHE_1bit
   $ mkdir build && cd build
   $ cmake ..
   $ make
-  $ ./test_escrow_protocol
+  $ ./test_zkp_phe_1bit
 ```
 
 
