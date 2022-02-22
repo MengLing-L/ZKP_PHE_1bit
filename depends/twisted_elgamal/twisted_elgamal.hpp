@@ -241,7 +241,7 @@ void Twisted_ElGamal_Enc(Twisted_ElGamal_PP &pp,
 { 
     // begin encryption
     EC_POINT_mul(group, CT.X, NULL, pk, r, bn_ctx); // X = pk^r
-    EC_POINT_mul(group, CT.Y, r, pp.h, m, bn_ctx); // Y = g^m h^r = U
+    EC_POINT_mul(group, CT.Y, r, pp.h, m, bn_ctx); // Y = g^r h^m = U
 
     #ifdef DEBUG
         cout << "twisted ElGamal encryption finishes >>>"<< endl;
