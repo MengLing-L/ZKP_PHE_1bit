@@ -194,11 +194,23 @@ void Sigma_Prove(Sigma_PP &pp,
 
     BIGNUM *mui = BN_new(); 
     BIGNUM *negone = BN_new();
+    const EC_POINT *vec_A[2]; 
+    const BIGNUM *vec_x[2];
+
+
     BN_copy(negone, BN_1);
     BN_set_negative(negone, 1);
     BN_print(negone,"negone");
+
+
     EC_POINT *c1_h = EC_POINT_new(group); 
-    EC_POINT_mul(group, c1_h, NULL, instance.U, negone, bn_ctx); //C1/h
+    const EC_POINT *vec_A[2]; 
+    const BIGNUM *vec_x[2];
+    vec_A[0] = instance.U; 
+    vec_A[1] = BN_1; 
+    vec_x[0] = pp.h; 
+    vec_x[1] = negone;
+    EC_POINT_mul(group, c1_h, NULL, pp.h, negone, bn_ctx); //c1_h = c1^1.h^-1
 
 
     BN_random(mui);
@@ -207,10 +219,9 @@ void Sigma_Prove(Sigma_PP &pp,
 
     EC_POINT_mul(group, proof.Y1, NULL, pp.g, mui, bn_ctx); // Y1 = g^mui
     EC_POINT_mul(group, proof.Y2, NULL, instance.twisted_ek, mui, bn_ctx); // Y2 =  PK^mui
-    EC_POINT_mul(group, proof.Y3, NULL, c1_h, proof.beta2, bn_ctx); //   (c1/h)^beta2
+    
 
-    const EC_POINT *vec_A[2]; 
-    const BIGNUM *vec_x[2];
+    EC_POINT_mul(group, proof.Y3, NULL, c1_h, proof.beta2, bn_ctx); //   (c1/h)^beta2
     vec_A[0] = pp.g; 
     vec_A[1] = proof.Y3; 
     vec_x[0] = proof.omi2; 
@@ -218,7 +229,6 @@ void Sigma_Prove(Sigma_PP &pp,
     EC_POINTs_mul(group, proof.Y3, NULL, 2, vec_A, vec_x, bn_ctx); //g^omi2.((c1/h)^beta2)^-1
 
     EC_POINT_mul(group, proof.Y4, NULL, instance.V, proof.beta2, bn_ctx); //C2^beta2
-
     vec_A[0] = instance.twisted_ek; 
     vec_A[1] = proof.Y4; 
     vec_x[0] = proof.omi2; 
@@ -231,14 +241,17 @@ void Sigma_Prove(Sigma_PP &pp,
     // compute the challenge
     BIGNUM *x = BN_new(); 
     Hash_String_to_BN(transcript_str, x); // challenge x
-    BN_mod(x, x, order, bn_ctx);
+    //BN_mod(x, x, order, bn_ctx);
     BN_print(x, "x");
 
     // compute the response
-    BN_mod_sub(proof.beta1, x, proof.beta2,order, bn_ctx); // beta1 = x - beta2
+    //BN_mod_sub(proof.beta1, x, proof.beta2,order, bn_ctx); // beta1 = x - beta2
+    BN_sub(proof.beta1, x, proof.beta2);
 
-    BN_mod_mul(proof.omi1, proof.beta1, witness.r, order, bn_ctx); //beta1.r
-    BN_mod_add(proof.omi1, proof.omi1, mui, order, bn_ctx); //omi1 = beta1.r + mui
+    //BN_mod_mul(proof.omi1, proof.beta1, witness.r, order, bn_ctx); //beta1.r
+    BN_mul(proof.omi1, proof.beta1, witness.r);
+    //BN_mod_add(proof.omi1, proof.omi1, mui, order, bn_ctx); //omi1 = beta1.r + mui
+    BN_add(proof.omi1, proof.omi1, mui);
 
     BN_free(mui); 
     BN_free(negone);
@@ -268,17 +281,19 @@ bool Sigma_Verify(Sigma_PP &pp,
     BN_print(beta1_beta2, "beta1_beta2");
 
     EC_POINT *c1_h = EC_POINT_new(group); 
-    EC_POINT_mul(group, c1_h, NULL, instance.U, negone, bn_ctx); //C1/h
+    const EC_POINT *vec_A[2]; 
+    const BIGNUM *vec_x[2];
+    vec_A[0] = instance.U; 
+    vec_A[1] = BN_1; 
+    vec_x[0] = pp.h; 
+    vec_x[1] = negone;
+    EC_POINT_mul(group, c1_h, NULL, pp.h, negone, bn_ctx); //c1_h = c1^1.h^-1
 
     EC_POINT *a1 = EC_POINT_new(group);
     EC_POINT *a2 = EC_POINT_new(group);
     EC_POINT *a3 = EC_POINT_new(group);
     EC_POINT *a4 = EC_POINT_new(group);
 
-    
-
-    const EC_POINT *vec_A[2]; 
-    const BIGNUM *vec_x[2];
 
     bool Va1,Va2,Va3,Va4;
 
