@@ -68,7 +68,24 @@ void test_protocol()
     BIGNUM *r = BN_new();
     BN_random(r);
 
+    cout << "Start Twisted Elgamal encryption >>>" << endl;
+    auto start_time = chrono::steady_clock::now(); 
+
     Twisted_ElGamal_Enc(pp_tt, keypair.pk, BN_0, r, CT);     
+    auto end_time = chrono::steady_clock::now(); // end to count the time
+    auto running_time = end_time - start_time;
+    cout << "Twisted Elgamal encryption takes time = "
+    << chrono::duration <double, milli> (running_time).count() << " ms" << endl;
+
+
+    cout << "Start Twisted Elgamal Decryption >>>" << endl; 
+    start_time = chrono::steady_clock::now();
+    BIGNUM *m_recovery = BN_new();
+    Twisted_ElGamal_Parallel_Dec(pp_tt, keypair.sk, CT, m_recovery);
+    end_time = chrono::steady_clock::now(); // end to count the time
+    running_time = end_time - start_time;
+    cout << "Twisted Elgamal Decryption takes time = "
+    << chrono::duration <double, milli> (running_time).count() << " ms" << endl;
 
     generate_sigma_random_instance_witness(pp_tt, sigma, sigma_instance, sigma_witness, r, CT, keypair.pk, true); 
 
@@ -76,11 +93,11 @@ void test_protocol()
 
 
     cout << "Generate the sigma proof >>>" << endl; 
-    auto start_time = chrono::steady_clock::now(); // start to count the time
+    start_time = chrono::steady_clock::now(); // start to count the time
     sigma_transcript_str = ""; 
     Sigma_Prove_Zero(sigma, sigma_instance, sigma_witness, sigma_transcript_str, sigma_proof);
-    auto end_time = chrono::steady_clock::now(); // end to count the time
-    auto running_time = end_time - start_time;
+    end_time = chrono::steady_clock::now(); // end to count the time
+    running_time = end_time - start_time;
     cout << "Sigma proof generation takes time = "
     << chrono::duration <double, milli> (running_time).count() << " ms" << endl;
 
