@@ -308,6 +308,8 @@ bool Sigma_Verify(Sigma_PP &pp,
     if (Va1) 
     { 
         cout<< "a1 == Y1 >>>" << endl; 
+        ECP_print(a1, "a1");
+        ECP_print(proof.Y1, "Y1");
     }
     else 
     {
@@ -330,6 +332,8 @@ bool Sigma_Verify(Sigma_PP &pp,
     if (Va2) 
     { 
         cout<< "a2 == Y2 >>>" << endl; 
+        ECP_print(a2, "a2");
+        ECP_print(proof.Y2, "Y2");
     }
     else 
     {
@@ -351,6 +355,8 @@ bool Sigma_Verify(Sigma_PP &pp,
     if (Va3) 
     { 
         cout<< "a3 == Y3 >>>" << endl; 
+        ECP_print(a3, "a3");
+        ECP_print(proof.Y3, "Y3");
     }
     else 
     {
@@ -372,6 +378,8 @@ bool Sigma_Verify(Sigma_PP &pp,
     if (Va4) 
     { 
         cout<< "a4 == Y4 >>>" << endl; 
+        ECP_print(a4, "a4");
+        ECP_print(proof.Y4, "Y4");
     }
     else 
     {
@@ -401,11 +409,15 @@ bool Sigma_Verify(Sigma_PP &pp,
     
     if (Validity) 
     { 
-        cout<< "Sigma proof for twisted ElGamal ciphertext accepts >>>" << endl; 
+        cout<< "Sigma proof for Twisted ElGamal ciphertext accepts >>>" << endl; 
+        BN_print(beta1_beta2,  "beta1+beta2");
+        BN_print(x,  "x");
     }
     else 
     {
-        cout<< "Sigma proof for twisted ElGamal ciphertext rejects >>>" << endl; 
+        cout<< "Sigma proof for Twisted ElGamal ciphertext rejects >>>" << endl; 
+        BN_print(beta1_beta2,  "beta1+beta2");
+        BN_print(x,  "x");
     }
     #endif
 
